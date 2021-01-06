@@ -90,14 +90,14 @@ public final class REPL {
           continue;
         }
       }
-      //REalisation de la commande !x qui depile et met la valeur dans x
+      //Realisation de la commande !x qui depile et met la valeur dans x
       if (cmd_len >= 2 && cmd.charAt(0) == '!')
       {
         String var = cmd.substring(1,cmd_len);
         variables.put(var,pile.pop());
         continue;
       }
-      //REalisation de la commande ?x qui lit la valeur de x l'empile
+      //Realisation de la commande ?x qui lit la valeur de x l'empile
       if (cmd_len >= 2 && cmd.charAt(0) == '?')
       {
         String var = cmd.substring(1,cmd_len);
