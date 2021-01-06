@@ -29,12 +29,12 @@ public final class REPL {
     this.variables = new HashMap<String,String>();
   }
   /**
-  Effectue la boucle principale du programme, à savoir :
-  -récuperer la commande,
-  -évaluer cette commande
-  -l'afficher
-  -recommencer.
-  On arrête cette boucle dès que l'utilisateur tape la commande "exit"
+  Effectue la boucle principale du programme, a savoir :
+  		<p>-recuperer la commande,</p>
+  		<p>-evaluer cette commande </p>
+  		<p>-l'afficher </p>
+  		<p>-recommencer. </p>
+  	On arrete cette boucle des que l'utilisateur tape la commande "exit"
   **/
   public void boucle()
   {

@@ -14,6 +14,22 @@ public class Main {
     BiFunction<Integer,Integer,Integer> amoins = (a,b) -> a - b;
     BiFunction<Integer,Integer,Integer> afois = (a,b) -> a * b;
     BiFunction<Integer,Integer,Integer> adiv = (a,b) -> a / b;
+	Type Nombre_Decimal = new Type("Nombre_Decimal"){
+		@Override
+		public Optional<Integer> convert(String str)
+		{
+			Integer nb = 0;
+			try
+			{
+				nb = Integer.parseInt(str);
+			}
+			catch(NumberFormatException e)
+			{
+				return Optional.empty();
+			}
+			return Optional.of(nb);
+		}
+	};
     REPL repl = new REPL(Arrays.asList(plus,moins,fois,div),
     Arrays.asList(aplus,amoins,afois,adiv));
     repl.boucle();
