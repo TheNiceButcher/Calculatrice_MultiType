@@ -85,14 +85,27 @@ public class Main {
 				{
 					return Optional.empty();
 				}
-				return Optional.empty();
+				Set<String> new_set = new HashSet<String>();
+				int prev_index = 1;
+				for (int i = 1; i < str.length() - 1; i++)
+				{
+					if (str.charAt(i) == ',')
+					{
+						new_set.add(str.substring(prev_index,i));
+						prev_index = i+1;
+					}
+				}
+				new_set.add(str.substring(prev_index,str.length()-1));
+				return Optional.of(new_set);
 			}
 		};
 		Map<Type,List<Operation>> t = new HashMap<>();
 		List<Operation> op_nd = Arrays.asList(plus,moins,fois,div);
 		List<Operation> op_bool = Arrays.asList(non,ou,et);
+		List<Operation> op_ens = Arrays.asList(union,inters,diffe);
 		t.put(Nombre_Decimal,op_nd);
 		t.put(Booleen,op_bool);
+		t.put(Ensemble,op_ens);
 	    REPL repl = new REPL(t);
 	    repl.boucle();
 	    System.out.println("Au revoir et a bientot");

@@ -2,6 +2,7 @@ import java.util.*;
 import java.util.function.*;
 /**
 Classe qui realise la partie REPL (read,eval,print,loop) de la calculatrice
+
 **/
 public final class REPL {
   private List<Operation> operations;
@@ -199,7 +200,37 @@ public final class REPL {
 				}
 				else if (t.getName().equals("Ensemble"))
 				{
-
+					int nb_arg = op.getArite();
+					Set[] list_arg = new Set[nb_arg];
+					boolean type_error = false;
+					for(int i = 0; i < nb_arg; i++)
+					{
+						Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
+						if (arg.isPresent())
+						{
+							list_arg[i] = (Set) arg.get();
+						}
+						else
+						{
+							type_error = true;
+						}
+					}
+					if (type_error)
+					{
+						System.out.println("Erreur typage");
+						break;
+					}
+					for(int i = 0; i < nb_arg; i++)
+					{
+		            	pile.pop();
+		            }
+					Set<String> result = (Set) ((Operation<Set>)op).appliquer(list_arg);
+					String str_result = result.stream().
+					reduce("{",(a,elt) -> a + (a.equals("{")?"":",") + elt,(a,b)-> a + b);
+ 					String true_result = str_result.concat("}");
+					pile.push(true_result);
+		            historique.add(true_result);
+		            System.out.println(pile.peek());
 				}
 				else
 				{
