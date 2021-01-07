@@ -30,6 +30,8 @@ public class Main {
 			return Optional.of(nb);
 		}
 	};
+	Integer nb = (Integer) Nombre_Decimal.convert("92").get();
+	System.out.println(nb);
     REPL repl = new REPL(Arrays.asList(plus,moins,fois,div),
     Arrays.asList(aplus,amoins,afois,adiv));
     repl.boucle();
