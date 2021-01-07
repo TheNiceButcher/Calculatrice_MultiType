@@ -112,133 +112,133 @@ public final class REPL {
         }
         continue;
       }
-      boolean isOperation = false;
+	  boolean isOperation = false;
 	  for (Type t : hello.keySet())
 	  {
-	      for (Operation op : hello.get(t))
-	      {
-	        if (op.getSymbole().equals(cmd))
-	        {
-	          isOperation = true;
-	          if (pile.size() < op.getArite())
-	          {
-	            System.out.println("Pas assez d'argument");
-	          }
-	          else
-	          {
-				if (t.getName().equals("Nombre_Decimal"))
-				{
-					//
-					int nb_arg = op.getArite();
-					Integer[] list_arg = new Integer[nb_arg];
-					boolean type_error = false;
-					for(int i = 0; i < nb_arg; i++)
-					{
-						Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
-						if (arg.isPresent())
-						{
-							list_arg[i] = (Integer) arg.get();
-						}
-						else
-						{
-							type_error = true;
-						}
-					}
-					if (type_error)
-					{
-						System.out.println("Erreur typage");
-						break;
-					}
-					for(int i = 0; i < nb_arg; i++)
-					{
-		            	pile.pop();
-		            }
-					Integer result = (Integer) ((Operation<Integer>)op).appliquer(list_arg);
-		            pile.push(String.valueOf(result));
-		            historique.add(String.valueOf(result));
-		            System.out.println(pile.peek());
-				}
-				else if (t.getName().equals("Booleen"))
-				{
-					int nb_arg = op.getArite();
-					Boolean[] list_arg = new Boolean[nb_arg];
-					boolean type_error = false;
-					for(int i = 0; i < nb_arg; i++)
-					{
-						Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
-						if (arg.isPresent())
-						{
-							list_arg[i] = (Boolean) arg.get();
-						}
-						else
-						{
-							type_error = true;
-						}
-					}
-					if (type_error)
-					{
-						System.out.println("Erreur typage");
-						break;
-					}
-					for(int i = 0; i < nb_arg; i++)
-					{
-		            	pile.pop();
-		            }
-					Boolean result = (Boolean) ((Operation<Boolean>)op).appliquer(list_arg);
-					String value;
-					if (result == true)
-					{
-						value = "VRAI";
-					}
-					else
-					{
-		            	value = "FAUX";
-					}
-					pile.push(String.valueOf(value));
-		            historique.add(String.valueOf(value));
-		            System.out.println(pile.peek());
-				}
-				else if (t.getName().equals("Ensemble"))
-				{
-					int nb_arg = op.getArite();
-					Set[] list_arg = new Set[nb_arg];
-					boolean type_error = false;
-					for(int i = 0; i < nb_arg; i++)
-					{
-						Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
-						if (arg.isPresent())
-						{
-							list_arg[i] = (Set) arg.get();
-						}
-						else
-						{
-							type_error = true;
-						}
-					}
-					if (type_error)
-					{
-						System.out.println("Erreur typage");
-						break;
-					}
-					for(int i = 0; i < nb_arg; i++)
-					{
-		            	pile.pop();
-		            }
-					Set<String> result = (Set) ((Operation<Set>)op).appliquer(list_arg);
-					String str_result = result.stream().
-					reduce("{",(a,elt) -> a + (a.equals("{")?"":",") + elt,(a,b)-> a + b);
- 					String true_result = str_result.concat("}");
-					pile.push(true_result);
-		            historique.add(true_result);
-		            System.out.println(pile.peek());
-				}
-				else
-				{
-					System.out.println("Type inconnu");
-				}
-	          }
-	          break;
-	        }
+		  for (Operation op : hello.get(t))
+		  {
+			  if (op.getSymbole().equals(cmd))
+			  {
+				  isOperation = true;
+				  if (pile.size() < op.getArite())
+				  {
+					  System.out.println("Pas assez d'argument");
+				  }
+				  else
+				  {
+					  if (t.getName().equals("Nombre_Decimal"))
+					  {
+						  //
+						  int nb_arg = op.getArite();
+						  Integer[] list_arg = new Integer[nb_arg];
+						  boolean type_error = false;
+						  for(int i = 0; i < nb_arg; i++)
+						  {
+							  Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
+							  if (arg.isPresent())
+							  {
+								  list_arg[i] = (Integer) arg.get();
+							  }
+							  else
+							  {
+								  type_error = true;
+							  }
+						  }
+						  if (type_error)
+						  {
+							  System.out.println("Erreur typage : type attendu " + t.getName());
+							  break;
+						  }
+						  for(int i = 0; i < nb_arg; i++)
+						  {
+							  pile.pop();
+						  }
+						  Integer result = (Integer) ((Operation<Integer>)op).appliquer(list_arg);
+						  pile.push(String.valueOf(result));
+						  historique.add(String.valueOf(result));
+						  System.out.println(pile.peek());
+					  }
+					  else if (t.getName().equals("Booleen"))
+					  {
+						  int nb_arg = op.getArite();
+						  Boolean[] list_arg = new Boolean[nb_arg];
+						  boolean type_error = false;
+						  for(int i = 0; i < nb_arg; i++)
+						  {
+							  Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
+							  if (arg.isPresent())
+							  {
+								  list_arg[i] = (Boolean) arg.get();
+							  }
+							  else
+							  {
+								  type_error = true;
+							  }
+						  }
+						  if (type_error)
+						  {
+							  System.out.println("Erreur typage : type attendu " + t.getName());
+							  break;
+						  }
+						  for(int i = 0; i < nb_arg; i++)
+						  {
+							  pile.pop();
+						  }
+						  Boolean result = (Boolean) ((Operation<Boolean>)op).appliquer(list_arg);
+						  String value;
+						  if (result == true)
+						  {
+							  value = "VRAI";
+						  }
+						  else
+						  {
+							  value = "FAUX";
+						  }
+						  pile.push(String.valueOf(value));
+						  historique.add(String.valueOf(value));
+						  System.out.println(pile.peek());
+					  }
+					  else if (t.getName().equals("Ensemble"))
+					  {
+						  int nb_arg = op.getArite();
+						  Set[] list_arg = new Set[nb_arg];
+						  boolean type_error = false;
+						  for(int i = 0; i < nb_arg; i++)
+						  {
+							  Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
+							  if (arg.isPresent())
+							  {
+								  list_arg[i] = (Set) arg.get();
+							  }
+							  else
+							  {
+								  type_error = true;
+							  }
+						  }
+						  if (type_error)
+						  {
+							  System.out.println("Erreur typage : type attendu " + t.getName());
+							  break;
+						  }
+						  for(int i = 0; i < nb_arg; i++)
+						  {
+							  pile.pop();
+						  }
+						  Set<String> result = (Set) ((Operation<Set>)op).appliquer(list_arg);
+						  String str_result = result.stream().
+						  reduce("{",(a,elt) -> a + (a.equals("{")?"":",") + elt,(a,b)-> a + b);
+						  String true_result = str_result.concat("}");
+						  pile.push(true_result);
+						  historique.add(true_result);
+						  System.out.println(pile.peek());
+					  }
+					  else
+					  {
+						  System.out.println("Type inconnu");
+					  }
+				  }
+				  break;
+			  }
 	      }
 	  }
       if (isOperation == false)
