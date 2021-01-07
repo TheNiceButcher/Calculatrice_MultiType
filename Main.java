@@ -4,37 +4,97 @@ import java.util.function.*;
 Classe contenant la fonction main du projet
 **/
 public class Main {
-  public static void main(String[] args) {
-    System.out.println("Bienvenue dans cette calculatrice");
-    Operation plus = new Operation(2,"+");
-    Operation moins = new Operation(2,"-");
-    Operation fois = new Operation(2,"*");
-    Operation div = new Operation(2,"/");
-    BiFunction<Integer,Integer,Integer> aplus = (a,b) -> a + b;
-    BiFunction<Integer,Integer,Integer> amoins = (a,b) -> a - b;
-    BiFunction<Integer,Integer,Integer> afois = (a,b) -> a * b;
-    BiFunction<Integer,Integer,Integer> adiv = (a,b) -> a / b;
-	Type Nombre_Decimal = new Type("Nombre_Decimal"){
-		@Override
-		public Optional<Integer> convert(String str)
-		{
-			Integer nb = 0;
-			try
+	public static void creation_Type()
+	{
+
+	}
+	@SuppressWarnings("unchecked")
+	public static void main(String[] args) {
+		System.out.println("Bienvenue dans cette calculatrice");
+	    BiFunction<Integer,Integer,Integer> aplus = (a,b) -> a + b;
+	    BiFunction<Integer,Integer,Integer> amoins = (a,b) -> a - b;
+	    BiFunction<Integer,Integer,Integer> afois = (a,b) -> a * b;
+	    BiFunction<Integer,Integer,Integer> adiv = (a,b) -> a / b;
+		Function<Boolean,Boolean> neg = (a) -> (!a);
+		BiFunction<Boolean,Boolean,Boolean> or = (a,b) -> (a || b);
+		BiFunction<Boolean,Boolean,Boolean> and = (a,b) -> (a && b);
+		BiFunction<Set,Set,Set> un = (a,b) -> {
+			Set result = new HashSet(a);
+			result.addAll(b);
+			return result;
+		};
+		BiFunction<Set,Set,Set> inter = (a,b) -> {
+			Set result = new HashSet();
+			for (Object o : a)
 			{
-				nb = Integer.parseInt(str);
+				if (b.contains(o))
+				{
+					result.add(o);
+				}
 			}
-			catch(NumberFormatException e)
+			return result;
+		};
+		BiFunction<Set,Set,Set> diff = (a,b) -> {
+			Set result = new HashSet(a);
+			result.removeAll(b);
+			return result;
+		};
+		Operation<Integer> plus = new Operation.DeuxArgument<Integer>("+",aplus);
+		Operation<Integer> moins = new Operation.DeuxArgument<Integer>("-",amoins);
+	    Operation<Integer> fois = new Operation.DeuxArgument<Integer>("*",afois);
+	    Operation<Integer> div = new Operation.DeuxArgument<Integer>("/",adiv);
+		Operation<Boolean> non = new Operation.UnArgument<Boolean>("NON",neg);
+		Operation<Boolean> ou = new Operation.DeuxArgument<Boolean>("OU",or);
+		Operation<Boolean> et = new Operation.DeuxArgument<Boolean>("ET",and);
+		Operation<Set> union = new Operation.DeuxArgument<Set>("UNION",un);
+		Operation<Set> inters = new Operation.DeuxArgument<Set>("INTER",inter);
+		Operation<Set> diffe = new Operation.DeuxArgument<Set>("DIFF",diff);
+		Type Nombre_Decimal = new Type("Nombre_Decimal"){
+			@Override
+			public Optional<Integer> convert(String str)
 			{
+				Integer nb = 0;
+				try
+				{
+					nb = Integer.parseInt(str);
+				}
+				catch(NumberFormatException e)
+				{
+					return Optional.empty();
+				}
+				return Optional.of(nb);
+			}
+		};
+		Type Booleen = new Type("Booleen"){
+			@Override
+			public Optional<Boolean> convert(String str)
+			{
+				if (str.equals("VRAI"))
+					return Optional.of(true);
+				else if (str.equals("FAUX"))
+					return Optional.of(false);
+				else
+					return Optional.empty();
+			}
+		};
+		Type Ensemble = new Type("Ensemble"){
+			@Override
+			public Optional<Set> convert(String str)
+			{
+				if (str.charAt(0) != '{' || str.charAt(str.length()-1) != '}')
+				{
+					return Optional.empty();
+				}
 				return Optional.empty();
 			}
-			return Optional.of(nb);
-		}
-	};
-	Integer nb = (Integer) Nombre_Decimal.convert("92").get();
-	System.out.println(nb);
-    REPL repl = new REPL(Arrays.asList(plus,moins,fois,div),
-    Arrays.asList(aplus,amoins,afois,adiv));
-    repl.boucle();
-    System.out.println("Au revoir et a bientot");
-  }
+		};
+		Map<Type,List<Operation>> t = new HashMap<>();
+		List<Operation> op_nd = Arrays.asList(plus,moins,fois,div);
+		List<Operation> op_bool = Arrays.asList(non,ou,et);
+		t.put(Nombre_Decimal,op_nd);
+		t.put(Booleen,op_bool);
+	    REPL repl = new REPL(t);
+	    repl.boucle();
+	    System.out.println("Au revoir et a bientot");
+	  }
 }

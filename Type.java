@@ -45,7 +45,7 @@ public abstract class Type {
 		return copie;
 	}
 	/**
-	Prend une chaine de caractère, et renvoie un Optional contenant une instance
+	Prend une chaine de caractere, et renvoie un Optional contenant une instance
 	du type, si elle est convertible dans le type. Sinon on renvoie l'Optional
 	vide.
 	@param str Chaine de caractere que l'on veut convertir dans le type courant

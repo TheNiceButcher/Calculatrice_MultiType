@@ -8,23 +8,21 @@ public final class REPL {
   private Stack<String> pile;
   private List<String> historique;
   private Map<String,String> variables;
-  private Map<Operation,BiFunction<Integer,Integer,Integer>> interpretations;
+  private Map<Type,List<Operation>> hello;
+  //private Map<Operation,BiFunction<Integer,Integer,Integer>> interpretations;
   /**
   Creation d'une instance de REPL
   **/
-  public REPL(List<Operation> op,List<BiFunction<Integer,Integer,Integer>> applications)
+  public REPL(Map<Type,List<Operation>> dico)
   {
-    if (op.size() != applications.size())
-    {
-      System.out.println("Ouille");
-    }
-    this.operations = new ArrayList<Operation>(op);
+    this.operations = new ArrayList<Operation>();
+	for (Type t : dico.keySet())
+	{
+		operations.addAll(dico.get(t));
+	}
+	this.hello = new HashMap<>(dico);
     this.pile = new Stack<String>();
-    this.interpretations = new HashMap<Operation,BiFunction<Integer,Integer,Integer>>();
-    for(int i = 0; i < operations.size(); i++)
-    {
-      this.interpretations.put(operations.get(i),applications.get(i));
-    }
+    //this.interpretations = new HashMap<Operation,BiFunction<Integer,Integer,Integer>>();
     this.historique = new ArrayList<String>();
     this.variables = new HashMap<String,String>();
   }
@@ -36,6 +34,7 @@ public final class REPL {
   		<p>-recommencer. </p>
   	On arrete cette boucle des que l'utilisateur tape la commande "exit"
   **/
+  @SuppressWarnings("unchecked")
   public void boucle()
   {
     Scanner scan = new Scanner(System.in);
@@ -113,29 +112,104 @@ public final class REPL {
         continue;
       }
       boolean isOperation = false;
-      for (Operation op : operations)
-      {
-        if (op.getSymbole().equals(cmd))
-        {
-          isOperation = true;
-          if (pile.size() < op.getArite())
-          {
-            System.out.println("Pas assez d'argument");
-          }
-          else
-          {
-            Integer arg1 = Integer.parseInt(pile.get(pile.size()-2));
-            Integer arg2 = Integer.parseInt(pile.get(pile.size()-1));
-            pile.pop();
-            pile.pop();
-            Integer result = interpretations.get(op).apply(arg1,arg2);
-            pile.push(String.valueOf(result));
-            historique.add(String.valueOf(result));
-            System.out.println(pile.peek());
-          }
-          break;
-        }
-      }
+	  for (Type t : hello.keySet())
+	  {
+	      for (Operation op : hello.get(t))
+	      {
+	        if (op.getSymbole().equals(cmd))
+	        {
+	          isOperation = true;
+	          if (pile.size() < op.getArite())
+	          {
+	            System.out.println("Pas assez d'argument");
+	          }
+	          else
+	          {
+				if (t.getName().equals("Nombre_Decimal"))
+				{
+					//
+					int nb_arg = op.getArite();
+					Integer[] list_arg = new Integer[nb_arg];
+					boolean type_error = false;
+					for(int i = 0; i < nb_arg; i++)
+					{
+						Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
+						if (arg.isPresent())
+						{
+							list_arg[i] = (Integer) arg.get();
+						}
+						else
+						{
+							type_error = true;
+						}
+					}
+					if (type_error)
+					{
+						System.out.println("Erreur typage");
+						break;
+					}
+					for(int i = 0; i < nb_arg; i++)
+					{
+		            	pile.pop();
+		            }
+					Integer result = (Integer) ((Operation<Integer>)op).appliquer(list_arg);
+		            pile.push(String.valueOf(result));
+		            historique.add(String.valueOf(result));
+		            System.out.println(pile.peek());
+				}
+				else if (t.getName().equals("Booleen"))
+				{
+					int nb_arg = op.getArite();
+					Boolean[] list_arg = new Boolean[nb_arg];
+					boolean type_error = false;
+					for(int i = 0; i < nb_arg; i++)
+					{
+						Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
+						if (arg.isPresent())
+						{
+							list_arg[i] = (Boolean) arg.get();
+						}
+						else
+						{
+							type_error = true;
+						}
+					}
+					if (type_error)
+					{
+						System.out.println("Erreur typage");
+						break;
+					}
+					for(int i = 0; i < nb_arg; i++)
+					{
+		            	pile.pop();
+		            }
+					Boolean result = (Boolean) ((Operation<Boolean>)op).appliquer(list_arg);
+					String value;
+					if (result == true)
+					{
+						value = "VRAI";
+					}
+					else
+					{
+		            	value = "FAUX";
+					}
+					pile.push(String.valueOf(value));
+		            historique.add(String.valueOf(value));
+		            System.out.println(pile.peek());
+				}
+				else if (t.getName().equals("Ensemble"))
+				{
+
+				}
+				else
+				{
+					System.out.println("Type inconnu");
+				}
+	          }
+	          break;
+	        }
+	      }
+	  }
       if (isOperation == false)
       {
         pile.push(cmd);
