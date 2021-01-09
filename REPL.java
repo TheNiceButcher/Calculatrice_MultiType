@@ -158,79 +158,85 @@ public final class REPL {
 	  */
 	  else
 	  {
-		  /*String sommet_pile = pile.peek();
+		  String sommet_pile = pile.peek();
 		  Type type_sommet_pile = null;
-		  Operation op_to_do = null;
 		  for (Type t : hello.keySet())
 		  {
 			  Optional argn = t.convert(sommet_pile);
 			  if (argn.isPresent())
 			  {
 				  type_sommet_pile = t;
-				  for (Operation op : compatible)
-				  {
-					  if (hello.get(t).contains(op))
-					  {
-						  op_to_do = op;
-					  }
-				  }
-				  if (op_to_do != null)
-				  	break;
+				  break;
 			  }
 		  }
-		  if (op_to_do == null)
+		  Optional<Operation> opt_op =
+		  hello.get(type_sommet_pile).stream().
+		  filter(op -> op.getSymbole().equals(cmd)).findAny();
+		  if (!opt_op.isPresent())
 		  {
-			  System.out.println(cmd + "(" + "Incompatible avec " + sommet_pile);
-		  }*/
-		  if (compatible.size()==1)
+			  System.out.println(cmd + " Incompatible avec " + sommet_pile);
+			  continue;
+		  }
+		  Operation op = opt_op.get();
+		  if (op.getArite() > pile.size())
 		  {
-			  Operation op = compatible.get(0);
-			  if (op.getArite() > pile.size())
+			  System.out.println(op.getSymbole() + " Attend " + op.getArite()+  " arguments " + "Nombre actuel " + pile.size());
+			  continue;
+		  }
+		  for (Type t : hello.keySet())
+		  {
+			  if (hello.get(t).contains(op))
 			  {
-				  System.out.println(op.getSymbole() + " Attend " + op.getArite() +
-				  " arguments " + "Nombre actuel " + pile.size());
-				  continue;
-			  }
-			  for (Type t : hello.keySet())
-			  {
-				  if (hello.get(t).contains(op))
+				  int nb_arg = op.getArite();
+				  Object[] list_arg = new Object[nb_arg];
+				  boolean type_error = false;
+				  int index_err = -1;
+				  for (int i = 0; i < nb_arg; i++)
 				  {
-					  int nb_arg = op.getArite();
-					  Object[] list_arg = new Object[nb_arg];
-					  boolean type_error = false;
-					  for (int i = 0; i < nb_arg; i++)
+					  Object arg = t.value(pile.get(pile.size()-nb_arg + i));
+					  if (arg == null)
 					  {
-						  Object arg = t.value(pile.get(pile.size()-nb_arg + i));
-						  if (arg == null)
-						  {
-							  type_error = true;
-						  }
-						  else
-						  {
-							  list_arg[i] = arg;
-						  }
-					  }
-					  if (type_error == true)
-					  {
-						  System.out.println("Erreur typage : type attendu " + t.getName());
+						  type_error = true;
+						  index_err = pile.size()-nb_arg + i;
 						  break;
 					  }
-					  for(int i = 0; i < nb_arg; i++)
+					  else
 					  {
-						  pile.pop();
+						  list_arg[i] = arg;
 					  }
-					  Object result = op.appliquer(list_arg);
-					  String str_result = t.toStack(result);
-					  pile.push(str_result);
-					  historique.add(str_result);
-					  System.out.println(pile.peek());
-
 				  }
+				  if (type_error == true)
+				  {
+					  Type type_error_arg = null;
+					  String arg_erreur = pile.get(index_err);
+					  for (Type t_e : hello.keySet())
+					  {
+						  Object arg = t_e.value(pile.get(index_err));
+						  if (arg != null)
+						  {
+							  type_error_arg = t_e;
+							  break;
+						  }
+					  }
+					  System.out.println("Erreur typage : type attendu " + t.getName() + " type recu "+ type_error_arg.getName() + "(" +
+					  pile.get(index_err) + ")");
+					  break;
+				  }
+				  for(int i = 0; i < nb_arg; i++)
+				  {
+					  pile.pop();
+				  }
+				  Object result = op.appliquer(list_arg);
+				  String str_result = t.toStack(result);
+				  pile.push(str_result);
+				  historique.add(str_result);
+				  System.out.println(pile.peek());
+
 			  }
 		  }
-		  continue;
 	  }
-    }
-    scan.close();
+	  continue;
   }
+  scan.close();
+	}
 }
