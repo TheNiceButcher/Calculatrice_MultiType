@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 /**
 Classe qui realise la partie REPL (read,eval,print,loop) de la calculatrice
 
@@ -26,6 +27,13 @@ public final class REPL {
     //this.interpretations = new HashMap<Operation,BiFunction<Integer,Integer,Integer>>();
     this.historique = new ArrayList<String>();
     this.variables = new HashMap<String,String>();
+  }
+  /**
+  Gere les commandes hist et pile de la boucle
+  **/
+  public void history()
+  {
+
   }
   /**
   Effectue la boucle principale du programme, a savoir :
@@ -111,7 +119,30 @@ public final class REPL {
           System.out.println(pile.peek());
         }
         continue;
-      }
+    }
+	  List<Operation> compatible = operations.stream()
+	  .filter(op -> op.getSymbole().equals(cmd)).collect(Collectors.toList());
+	  //Si la commande n'est pas une operation, on la met dans la pile si elle est valide
+	  if (compatible.isEmpty())
+	  {
+		  boolean isValide = false;
+		  for (Type t : hello.keySet())
+		  {
+			  Optional operande = t.convert(cmd);
+			  if (operande.isPresent())
+			  {
+				  isValide = true;
+				  pile.push(cmd);
+				  historique.add(cmd);
+				  System.out.println(pile.peek());
+			  }
+		  }
+		  if (isValide == false)
+		  {
+			  System.out.println(cmd + ": Operande de type non supporte");
+			  continue;
+		  }
+	  }
 	  boolean isOperation = false;
 	  for (Type t : hello.keySet())
 	  {
@@ -241,12 +272,13 @@ public final class REPL {
 			  }
 	      }
 	  }
+/*
       if (isOperation == false)
       {
         pile.push(cmd);
         historique.add(cmd);
         System.out.println(pile.peek());
-      }
+	}*/
     }
     scan.close();
   }
