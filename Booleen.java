@@ -31,7 +31,6 @@ public final class Booleen extends Type {
 	{
 		if (!(obj instanceof Boolean))
 		{
-			System.out.println("WTF");
 			return null;
 		}
 		Boolean val = (Boolean) obj;

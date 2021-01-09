@@ -35,7 +35,6 @@ public final class Nombre_Decimal extends Type {
 	{
 		if (!(obj instanceof Integer))
 		{
-			System.out.println("WTF");
 			return null;
 		}
 		return String.valueOf((Integer) obj);

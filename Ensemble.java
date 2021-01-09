@@ -44,7 +44,6 @@ public final class Ensemble extends Type {
 	{
 		if (!(obj instanceof Set))
 		{
-			System.out.println("WTF");
 			return null;
 		}
 		Set<String> val = (Set) obj;
