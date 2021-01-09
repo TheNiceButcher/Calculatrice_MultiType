@@ -1,7 +1,8 @@
 ### Projet Calculatrice ###
 Bienvenue dans cette calculatrice en JAVA.
 Elle est multi-type (cf Section Suivante), et elle permet les rappels de valeurs(extension 3).
-Elle est en Syntaxe Polonaise Inversé (RPN).
+Elle est en Syntaxe Polonaise Inversé (RPN). Cette calculatrice a été
+réalisée sur 'openjdk version "10.0.1"'.
 
 ### Types supportés ###
 - Nombres Décimaux, avec les opérations addition (`+`),soustraction(`-`) , multiplication (`*`) et
@@ -27,5 +28,6 @@ Pour quitter la calculatrice, il faut écrire la commande `exit`.
 Voici la liste des commandes, permettant de se rappeler d'anciennes valeurs :
 	* `hist(n)` : Affiche la n-ième valeur tapée depuis le début de l'exécution et l'empile,
 	* `pile(n)` : Affiche le n-ième élément de la pile et l'empile,
-	* `!x` : Dépile et stocke la valeur de l'ancien sommet dans `x`
-	* `?x` : Affiche le contenu de `x` et l'empile
+	* `!x` : Dépile et stocke la valeur de l'ancien sommet dans `x`,
+	* `?x` : Affiche le contenu de `x` et l'empile.
+Remarque : `n` peut être négatif et correspondant alors à la |n|-ième valeur en partant de la fin.
