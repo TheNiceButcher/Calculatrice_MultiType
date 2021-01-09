@@ -48,7 +48,9 @@ public abstract class Operation<T> {
   public final static class UnArgument<T> extends Operation<T> {
 	  private Function<T,T> f;
 	  /**
-	  Cree un operation unaire de T vers T
+	  Cree un operation unaire de T vers T, avec la lambda expression en argument
+	  @param symbole Symbole de l'operation dans la calculatrice
+	  @param f Lambda-expression correspondant a l'action de l'operation
 	  **/
 	  public UnArgument(String symbole,Function<T,T> f)
 	  {
@@ -56,6 +58,8 @@ public abstract class Operation<T> {
 		  this.f = f;
 	  }
 	  /**
+	  Execute la fonction correspondant a l'operation courante et renvoie le resultat,
+	  si il y a un seul argument. Sinon, il renvoie null
 	  **/
 	  @Override
 	  @SuppressWarnings("unchecked")
@@ -70,15 +74,24 @@ public abstract class Operation<T> {
 
   }
   /**
-  Classe qui represente une operation binaire sur un element de T
+  Classe qui represente une operation binaire sur deux elements de T
   **/
   public final static class DeuxArgument<T> extends Operation<T> {
 	  private BiFunction<T,T,T> f;
+	  /**
+	  Cree un operation binaire de T vers T, avec la lambda expression en argument
+	  @param symbole Symbole de l'operation dans la calculatrice
+	  @param f Lambda-expression correspondant a l'action de l'operation
+	  **/
 	  public DeuxArgument(String symbole,BiFunction<T,T,T> f)
 	  {
 		  super(2,symbole);
 		  this.f = f;
 	  }
+	  /**
+	 Execute la fonction correspondant a l'operation courante et renvoie le resultat,
+	 si il y a un seul argument. Sinon, il renvoie null
+	 **/
 	  @Override
 	  @SuppressWarnings("unchecked")
 	  public T appliquer(T... args)
