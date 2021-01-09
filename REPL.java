@@ -6,11 +6,11 @@ Classe qui realise la partie REPL (read,eval,print,loop) de la calculatrice
 
 **/
 public final class REPL {
-  private List<Operation> operations;
-  private Stack<String> pile;
-  private List<String> historique;
-  private Map<String,String> variables;
-  private Map<Type,List<Operation>> hello;
+  private final List<Operation> operations;
+  private final Stack<String> pile;
+  private final List<String> historique;
+  private final Map<String,String> variables;
+  private final Map<Type,List<Operation>> hello;
   //private Map<Operation,BiFunction<Integer,Integer,Integer>> interpretations;
   /**
   Creation d'une instance de REPL
@@ -29,12 +29,48 @@ public final class REPL {
     this.variables = new HashMap<String,String>();
   }
   /**
-  Gere les commandes hist et pile de la boucle
+  Execute les commandes hist et pile de la boucle, ajoutees lors de l'extension 3.
+  Elle prend en argument la commande a executer et sa longueur et affiche l'information
+  souhaitee
+  @param cmd Commande a executer
+  @param cmd_len Longueur de la commande a exécuter
   **/
-  public void history()
-  {
-
-  }
+ 	public void history(String cmd,int cmd_len)
+ 	{
+	  String debut_cmd = cmd.substring(0,5);
+	  int pos = Integer.parseInt(cmd.substring(5,cmd_len - 1));
+	  if (debut_cmd.equals("hist("))
+	  {
+		if (pos < 0)
+		{
+		  pos = historique.size() + pos;
+		}
+		if (pos >= historique.size())
+		{
+		  System.out.println("historique invalide");
+		}
+		else
+		{
+		  pile.push(historique.get(pos));
+		}
+	  }
+	  else
+	  {
+		if (pos < 0)
+		{
+		  pos = pile.size() + pos;
+		}
+		if (pos >= pile.size())
+		{
+		  System.out.println("pile invalide");
+		}
+		else
+		{
+		  pile.push(pile.get(pos));
+		}
+	  }
+	  System.out.println(pile.peek());
+	}
   /**
   Effectue la boucle principale du programme, a savoir :
   		<p>-recuperer la commande,</p>
@@ -63,39 +99,8 @@ public final class REPL {
         String debut_cmd = cmd.substring(0,5);
         if (debut_cmd.equals("hist(") || debut_cmd.equals("pile("))
         {
-          int pos = Integer.parseInt(cmd.substring(5,cmd_len - 1));
-          if (debut_cmd.equals("hist("))
-          {
-            if (pos < 0)
-            {
-              pos = historique.size() + pos;
-            }
-            if (pos >= historique.size())
-            {
-              System.out.println("historique invalide");
-            }
-            else
-            {
-              pile.push(historique.get(pos));
-            }
-          }
-          else
-          {
-            if (pos < 0)
-            {
-              pos = pile.size() + pos;
-            }
-            if (pos >= pile.size())
-            {
-              System.out.println("pile invalide");
-            }
-            else
-            {
-              pile.push(pile.get(pos));
-            }
-          }
-          System.out.println(pile.peek());
-          continue;
+			history(cmd,cmd_len);
+			continue;
         }
       }
       //Realisation de la commande !x qui depile et met la valeur dans x
@@ -135,6 +140,7 @@ public final class REPL {
 				  pile.push(cmd);
 				  historique.add(cmd);
 				  System.out.println(pile.peek());
+				  break;
 			  }
 		  }
 		  if (isValide == false)
@@ -143,142 +149,55 @@ public final class REPL {
 			  continue;
 		  }
 	  }
-	  boolean isOperation = false;
-	  for (Type t : hello.keySet())
+	  else
 	  {
-		  for (Operation op : hello.get(t))
+		  if (compatible.size()==1)
 		  {
-			  if (op.getSymbole().equals(cmd))
+			  Operation op = compatible.get(0);
+			  if (op.getArite() > pile.size())
 			  {
-				  isOperation = true;
-				  if (pile.size() < op.getArite())
+				  System.out.println(op.getSymbole() + " Attend " + op.getArite() + " arguments");
+				  continue;
+			  }
+			  for (Type t : hello.keySet())
+			  {
+				  if (hello.get(t).contains(op))
 				  {
-					  System.out.println("Pas assez d'argument");
-				  }
-				  else
-				  {
-					  if (t.getName().equals("Nombre_Decimal"))
+					  int nb_arg = op.getArite();
+					  Object[] list_arg = new Object[nb_arg];
+					  boolean type_error = false;
+					  for (int i = 0; i < nb_arg; i++)
 					  {
-						  //
-						  int nb_arg = op.getArite();
-						  Integer[] list_arg = new Integer[nb_arg];
-						  boolean type_error = false;
-						  for(int i = 0; i < nb_arg; i++)
+						  Object arg = t.value(pile.get(pile.size()-nb_arg + i));
+						  if (arg == null)
 						  {
-							  Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
-							  if (arg.isPresent())
-							  {
-								  list_arg[i] = (Integer) arg.get();
-							  }
-							  else
-							  {
-								  type_error = true;
-							  }
-						  }
-						  if (type_error)
-						  {
-							  System.out.println("Erreur typage : type attendu " + t.getName());
-							  break;
-						  }
-						  for(int i = 0; i < nb_arg; i++)
-						  {
-							  pile.pop();
-						  }
-						  Integer result = (Integer) ((Operation<Integer>)op).appliquer(list_arg);
-						  pile.push(String.valueOf(result));
-						  historique.add(String.valueOf(result));
-						  System.out.println(pile.peek());
-					  }
-					  else if (t.getName().equals("Booleen"))
-					  {
-						  int nb_arg = op.getArite();
-						  Boolean[] list_arg = new Boolean[nb_arg];
-						  boolean type_error = false;
-						  for(int i = 0; i < nb_arg; i++)
-						  {
-							  Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
-							  if (arg.isPresent())
-							  {
-								  list_arg[i] = (Boolean) arg.get();
-							  }
-							  else
-							  {
-								  type_error = true;
-							  }
-						  }
-						  if (type_error)
-						  {
-							  System.out.println("Erreur typage : type attendu " + t.getName());
-							  break;
-						  }
-						  for(int i = 0; i < nb_arg; i++)
-						  {
-							  pile.pop();
-						  }
-						  Boolean result = (Boolean) ((Operation<Boolean>)op).appliquer(list_arg);
-						  String value;
-						  if (result == true)
-						  {
-							  value = "VRAI";
+							  type_error = true;
 						  }
 						  else
 						  {
-							  value = "FAUX";
+							  list_arg[i] = arg;
 						  }
-						  pile.push(String.valueOf(value));
-						  historique.add(String.valueOf(value));
-						  System.out.println(pile.peek());
 					  }
-					  else if (t.getName().equals("Ensemble"))
+					  if (type_error == true)
 					  {
-						  int nb_arg = op.getArite();
-						  Set[] list_arg = new Set[nb_arg];
-						  boolean type_error = false;
-						  for(int i = 0; i < nb_arg; i++)
-						  {
-							  Optional arg = t.convert(pile.get(pile.size()-nb_arg + i));
-							  if (arg.isPresent())
-							  {
-								  list_arg[i] = (Set) arg.get();
-							  }
-							  else
-							  {
-								  type_error = true;
-							  }
-						  }
-						  if (type_error)
-						  {
-							  System.out.println("Erreur typage : type attendu " + t.getName());
-							  break;
-						  }
-						  for(int i = 0; i < nb_arg; i++)
-						  {
-							  pile.pop();
-						  }
-						  Set<String> result = (Set) ((Operation<Set>)op).appliquer(list_arg);
-						  String str_result = result.stream().
-						  reduce("{",(a,elt) -> a + (a.equals("{")?"":",") + elt,(a,b)-> a + b);
-						  String true_result = str_result.concat("}");
-						  pile.push(true_result);
-						  historique.add(true_result);
-						  System.out.println(pile.peek());
+						  System.out.println("Erreur typage : type attendu " + t.getName());
+						  break;
 					  }
-					  else
+					  for(int i = 0; i < nb_arg; i++)
 					  {
-						  System.out.println("Type inconnu");
+						  pile.pop();
 					  }
+					  Object result = op.appliquer(list_arg);
+					  String str_result = t.toStack(result);
+					  pile.push(str_result);
+					  historique.add(str_result);
+					  System.out.println(pile.peek());
+
 				  }
-				  break;
 			  }
-	      }
+		  }
+		  continue;
 	  }
-/*
-      if (isOperation == false)
-      {
-        pile.push(cmd);
-        historique.add(cmd);
-        System.out.println(pile.peek());
-	}*/
     }
     scan.close();
   }

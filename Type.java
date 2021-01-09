@@ -53,4 +53,6 @@ public abstract class Type {
 	si elle est convertible, Optional vide sinon
 	**/
 	public abstract Optional<? extends Object> convert(String str);
+	public abstract Object value(String str);
+	public abstract String toStack(Object obj);
 }

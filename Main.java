@@ -64,6 +64,25 @@ public class Main {
 				}
 				return Optional.of(nb);
 			}
+			@Override
+			public Integer value(String str)
+			{
+				Optional<Integer> opt_int = convert(str);
+				if (!opt_int.isPresent())
+				{
+					return null;
+				}
+				return (Integer) opt_int.get();
+			}
+			public String toStack(Object obj)
+			{
+				if (!(obj instanceof Integer))
+				{
+					System.out.println("WTF");
+					return null;
+				}
+				return String.valueOf((Integer) obj);
+			}
 		};
 		Type Booleen = new Type("Booleen"){
 			@Override
@@ -75,6 +94,26 @@ public class Main {
 					return Optional.of(false);
 				else
 					return Optional.empty();
+			}
+			@Override
+			public Boolean value(String str)
+			{
+				Optional<Boolean> opt_bool = convert(str);
+				if (!opt_bool.isPresent())
+				{
+					return null;
+				}
+				return (Boolean) opt_bool.get();
+			}
+			public String toStack(Object obj)
+			{
+				if (!(obj instanceof Boolean))
+				{
+					System.out.println("WTF");
+					return null;
+				}
+				Boolean val = (Boolean) obj;
+				return (val?"VRAI":"FAUX");
 			}
 		};
 		Type Ensemble = new Type("Ensemble"){
@@ -97,6 +136,29 @@ public class Main {
 				}
 				new_set.add(str.substring(prev_index,str.length()-1));
 				return Optional.of(new_set);
+			}
+			@Override
+			public Set value(String str)
+			{
+				Optional<Set> opt_set = convert(str);
+				if (!opt_set.isPresent())
+				{
+					return null;
+				}
+				return (Set) opt_set.get();
+			}
+			public String toStack(Object obj)
+			{
+				if (!(obj instanceof Set))
+				{
+					System.out.println("WTF");
+					return null;
+				}
+				Set<String> val = (Set) obj;
+				String str_result = val.stream().
+				reduce("{",(a,elt) -> a + (a.equals("{")?"":",") + elt,(a,b)-> a + b);
+				String true_result = str_result.concat("}");
+				return true_result;
 			}
 		};
 		Map<Type,List<Operation>> t = new HashMap<>();
