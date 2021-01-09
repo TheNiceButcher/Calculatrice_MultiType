@@ -23,3 +23,9 @@ Il suffit alors de taper une valeur dont le type est supporté et c'est parti !
 La calculatrice étant en RPN, n'oubliez de taper les arguments avant l'opération
 demandée.
 Pour quitter la calculatrice, il faut écrire la commande `exit`.
+- Rappel de valeurs
+Voici la liste des commandes, permettant de se rappeler d'anciennes valeurs :
+	* `hist(n)` : Affiche la n-ième valeur tapée depuis le début de l'exécution et l'empile,
+	* `pile(n)` : Affiche le n-ième élément de la pile et l'empile,
+	* `!x` : Dépile et stocke la valeur de l'ancien sommet dans `x`
+	* `?x` : Affiche le contenu de `x` et l'empile
