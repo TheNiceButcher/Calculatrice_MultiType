@@ -53,6 +53,15 @@ public abstract class Type {
 	si elle est convertible, Optional vide sinon
 	**/
 	public abstract Optional<? extends Object> convert(String str);
+	/**
+	Prend une chaine de caractere et renvoie l'objet correspondant si elle est
+	convertible dans le type courant ou null
+	**/
 	public abstract Object value(String str);
+	/**
+	Renvoie la chaine de caractere representant l'objet en argument dans la
+	calculatrice.
+
+	**/
 	public abstract String toStack(Object obj);
 }

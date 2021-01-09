@@ -4,10 +4,7 @@ import java.util.function.*;
 Classe contenant la fonction main du projet
 **/
 public class Main {
-	public static void creation_Type()
-	{
 
-	}
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		System.out.println("Bienvenue dans cette calculatrice");
@@ -49,125 +46,16 @@ public class Main {
 		Operation<Set> union = new Operation.DeuxArgument<Set>("UNION",un);
 		Operation<Set> inters = new Operation.DeuxArgument<Set>("INTER",inter);
 		Operation<Set> diffe = new Operation.DeuxArgument<Set>("DIFF",diff);
-		Type Nombre_Decimal = new Type("Nombre_Decimal"){
-			@Override
-			public Optional<Integer> convert(String str)
-			{
-				Integer nb = 0;
-				try
-				{
-					nb = Integer.parseInt(str);
-				}
-				catch(NumberFormatException e)
-				{
-					return Optional.empty();
-				}
-				return Optional.of(nb);
-			}
-			@Override
-			public Integer value(String str)
-			{
-				Optional<Integer> opt_int = convert(str);
-				if (!opt_int.isPresent())
-				{
-					return null;
-				}
-				return (Integer) opt_int.get();
-			}
-			public String toStack(Object obj)
-			{
-				if (!(obj instanceof Integer))
-				{
-					System.out.println("WTF");
-					return null;
-				}
-				return String.valueOf((Integer) obj);
-			}
-		};
-		Type Booleen = new Type("Booleen"){
-			@Override
-			public Optional<Boolean> convert(String str)
-			{
-				if (str.equals("VRAI"))
-					return Optional.of(true);
-				else if (str.equals("FAUX"))
-					return Optional.of(false);
-				else
-					return Optional.empty();
-			}
-			@Override
-			public Boolean value(String str)
-			{
-				Optional<Boolean> opt_bool = convert(str);
-				if (!opt_bool.isPresent())
-				{
-					return null;
-				}
-				return (Boolean) opt_bool.get();
-			}
-			public String toStack(Object obj)
-			{
-				if (!(obj instanceof Boolean))
-				{
-					System.out.println("WTF");
-					return null;
-				}
-				Boolean val = (Boolean) obj;
-				return (val?"VRAI":"FAUX");
-			}
-		};
-		Type Ensemble = new Type("Ensemble"){
-			@Override
-			public Optional<Set> convert(String str)
-			{
-				if (str.charAt(0) != '{' || str.charAt(str.length()-1) != '}')
-				{
-					return Optional.empty();
-				}
-				Set<String> new_set = new HashSet<String>();
-				int prev_index = 1;
-				for (int i = 1; i < str.length() - 1; i++)
-				{
-					if (str.charAt(i) == ',')
-					{
-						new_set.add(str.substring(prev_index,i));
-						prev_index = i+1;
-					}
-				}
-				new_set.add(str.substring(prev_index,str.length()-1));
-				return Optional.of(new_set);
-			}
-			@Override
-			public Set value(String str)
-			{
-				Optional<Set> opt_set = convert(str);
-				if (!opt_set.isPresent())
-				{
-					return null;
-				}
-				return (Set) opt_set.get();
-			}
-			public String toStack(Object obj)
-			{
-				if (!(obj instanceof Set))
-				{
-					System.out.println("WTF");
-					return null;
-				}
-				Set<String> val = (Set) obj;
-				String str_result = val.stream().
-				reduce("{",(a,elt) -> a + (a.equals("{")?"":",") + elt,(a,b)-> a + b);
-				String true_result = str_result.concat("}");
-				return true_result;
-			}
-		};
+		Type nombre_Decimal = new Nombre_Decimal();
+		Type booleen = new Booleen();
+		Type ensemble = new Ensemble();
 		Map<Type,List<Operation>> t = new HashMap<>();
 		List<Operation> op_nd = Arrays.asList(plus,moins,fois,div);
 		List<Operation> op_bool = Arrays.asList(non,ou,et);
 		List<Operation> op_ens = Arrays.asList(union,inters,diffe);
-		t.put(Nombre_Decimal,op_nd);
-		t.put(Booleen,op_bool);
-		t.put(Ensemble,op_ens);
+		t.put(nombre_Decimal,op_nd);
+		t.put(booleen,op_bool);
+		t.put(ensemble,op_ens);
 	    REPL repl = new REPL(t);
 	    repl.boucle();
 	    System.out.println("Au revoir et a bientot");

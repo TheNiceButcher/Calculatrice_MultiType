@@ -39,6 +39,7 @@ public final class REPL {
  	{
 	  String debut_cmd = cmd.substring(0,5);
 	  int pos = Integer.parseInt(cmd.substring(5,cmd_len - 1));
+	  //Commande hist
 	  if (debut_cmd.equals("hist("))
 	  {
 		if (pos < 0)
@@ -54,6 +55,7 @@ public final class REPL {
 		  pile.push(historique.get(pos));
 		}
 	  }
+	  //Commande pile
 	  else
 	  {
 		if (pos < 0)
@@ -125,6 +127,7 @@ public final class REPL {
         }
         continue;
     }
+	//Regroupe toutes les operations avec le symbole de cmd
 	  List<Operation> compatible = operations.stream()
 	  .filter(op -> op.getSymbole().equals(cmd)).collect(Collectors.toList());
 	  //Si la commande n'est pas une operation, on la met dans la pile si elle est valide
@@ -149,14 +152,43 @@ public final class REPL {
 			  continue;
 		  }
 	  }
+	  /*
+	  Sinon on execute l'operation demandee si le nombre d'arguments et leur type
+	  sont compatibles
+	  */
 	  else
 	  {
+		  /*String sommet_pile = pile.peek();
+		  Type type_sommet_pile = null;
+		  Operation op_to_do = null;
+		  for (Type t : hello.keySet())
+		  {
+			  Optional argn = t.convert(sommet_pile);
+			  if (argn.isPresent())
+			  {
+				  type_sommet_pile = t;
+				  for (Operation op : compatible)
+				  {
+					  if (hello.get(t).contains(op))
+					  {
+						  op_to_do = op;
+					  }
+				  }
+				  if (op_to_do != null)
+				  	break;
+			  }
+		  }
+		  if (op_to_do == null)
+		  {
+			  System.out.println(cmd + "(" + "Incompatible avec " + sommet_pile);
+		  }*/
 		  if (compatible.size()==1)
 		  {
 			  Operation op = compatible.get(0);
 			  if (op.getArite() > pile.size())
 			  {
-				  System.out.println(op.getSymbole() + " Attend " + op.getArite() + " arguments");
+				  System.out.println(op.getSymbole() + " Attend " + op.getArite() +
+				  " arguments " + "Nombre actuel " + pile.size());
 				  continue;
 			  }
 			  for (Type t : hello.keySet())
